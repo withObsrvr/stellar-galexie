@@ -62,36 +62,64 @@ type StellarCoreConfig struct {
 }
 
 type DataStoreConfig struct {
-	Provider              string `mapstructure:"provider"`
-	DestinationBucketPath string `mapstructure:"destination_bucket_path"`
-	BasePath              string `mapstructure:"base_path"`
-	AccessToken           string `mapstructure:"access_token"`
-	BucketName            string `mapstructure:"bucket_name"`
-	Region                string `mapstructure:"region"`
-	Endpoint              string `mapstructure:"endpoint"`
-	ForcePathStyle        bool   `mapstructure:"force_path_style"`
+	Type   string            `toml:"type"`
+	Params map[string]string `toml:"params"`
+	Schema DataStoreSchema   `toml:"schema"`
 }
 
-func (c *DataStoreConfig) ToParams() map[string]string {
-	params := make(map[string]string)
+type DataStoreSchema struct {
+	LedgersPerFile    uint32 `toml:"ledgers_per_file"`
+	FilesPerPartition uint32 `toml:"files_per_partition"`
+}
 
-	// ... existing code ...
-
-	// Add S3-specific parameters
-	if c.Provider == "S3" {
-		params["bucket_name"] = c.BucketName
-		if c.Region != "" {
-			params["region"] = c.Region
-		}
-		if c.Endpoint != "" {
-			params["endpoint"] = c.Endpoint
-		}
-		if c.ForcePathStyle {
-			params["force_path_style"] = "true"
-		}
+// Validate checks if the datastore configuration is valid
+func (c *DataStoreConfig) Validate() error {
+	if c.Type == "" {
+		return errors.New("datastore type is required")
 	}
 
-	return params
+	switch c.Type {
+	case "GCS":
+		if _, ok := c.Params["destination_bucket_path"]; !ok {
+			return errors.New("destination_bucket_path is required for GCS")
+		}
+	case "S3":
+		if _, ok := c.Params["bucket_name"]; !ok {
+			return errors.New("bucket_name is required for S3")
+		}
+	case "FS":
+		if _, ok := c.Params["base_path"]; !ok {
+			return errors.New("base_path is required for FS")
+		}
+	default:
+		return fmt.Errorf("unsupported datastore type: %s", c.Type)
+	}
+
+	if c.Schema.LedgersPerFile == 0 {
+		return errors.New("ledgers_per_file must be greater than 0")
+	}
+
+	if c.Schema.FilesPerPartition == 0 {
+		return errors.New("files_per_partition must be greater than 0")
+	}
+
+	return nil
+}
+
+// GetDataStore creates a new datastore instance based on the configuration
+func (c *DataStoreConfig) GetDataStore(ctx context.Context) (datastore.DataStore, error) {
+	if err := c.Validate(); err != nil {
+		return nil, err
+	}
+
+	return datastore.NewDataStore(ctx, datastore.DataStoreConfig{
+		Type:   c.Type,
+		Params: c.Params,
+		Schema: datastore.DataStoreSchema{
+			LedgersPerFile:    c.Schema.LedgersPerFile,
+			FilesPerPartition: c.Schema.FilesPerPartition,
+		},
+	})
 }
 
 type Config struct {
@@ -323,4 +351,9 @@ func (config *Config) adjustLedgerRange() {
 	}
 
 	logger.Infof("Computed effective export boundary ledger range: start=%d, end=%d", config.StartLedger, config.EndLedger)
+}
+
+// ToParams converts the config to a map of parameters
+func (c *DataStoreConfig) ToParams() map[string]string {
+	return c.Params
 }

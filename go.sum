@@ -341,8 +341,8 @@ github.com/valyala/bytebufferpool v1.0.0 h1:GqA5TC/0021Y/b9FG4Oi9Mr3q7XYx6Kllzaw
 github.com/valyala/bytebufferpool v1.0.0/go.mod h1:6bBcMArwyJ5K/AmCkWv1jt77kVWyCJ6HpOuEn7z0Csc=
 github.com/valyala/fasthttp v1.34.0 h1:d3AAQJ2DRcxJYHm7OXNXtXt2as1vMDfxeIcFvhmGGm4=
 github.com/valyala/fasthttp v1.34.0/go.mod h1:epZA5N+7pY6ZaEKRmstzOuYJx9HI8DI1oaCGZpdH4h0=
-github.com/withObsrvr/stellar-datastore v0.0.0-20250128164535-c6df18b7cc29 h1:0vKd6eQXqioEux7qL73aiKwctWzfWBOJbjiUSBXkk5U=
-github.com/withObsrvr/stellar-datastore v0.0.0-20250128164535-c6df18b7cc29/go.mod h1:/QGs8CQhD2lQCWcESMkveAaoR9mHm34l6CBwLKeODV4=
+github.com/withObsrvr/stellar-datastore v0.0.0-20250207020532-a8ce24094f6b h1:ZYyCvfoFNIOkhgke6XzuFkKX7YXy7JweYYdmkt66qJs=
+github.com/withObsrvr/stellar-datastore v0.0.0-20250207020532-a8ce24094f6b/go.mod h1:/QGs8CQhD2lQCWcESMkveAaoR9mHm34l6CBwLKeODV4=
 github.com/withObsrvr/stellar-ledgerbackend v0.0.0-20241220092445-b96fa5b9c924 h1:QR1nwijFsU7lLm0PU/rYDdY7HHiyI3gH5A9VSzc+nG8=
 github.com/withObsrvr/stellar-ledgerbackend v0.0.0-20241220092445-b96fa5b9c924/go.mod h1:3+w0tFvg49givQ3DKE/i6KCFhHb8NKZ2REd9nnZPrGo=
 github.com/xdrpp/goxdr v0.1.1 h1:E1B2c6E8eYhOVyd7yEpOyopzTPirUeF6mVOfXfGyJyc=

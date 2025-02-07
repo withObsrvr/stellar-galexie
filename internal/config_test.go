@@ -449,17 +449,67 @@ func TestAdjustedLedgerRangeUnBoundedMode(t *testing.T) {
 
 func TestDataStoreConfigS3(t *testing.T) {
 	cfg := DataStoreConfig{
-		Provider:       "S3",
-		BucketName:     "test-bucket",
-		Region:         "us-west-2",
-		Endpoint:       "http://localhost:4566",
-		ForcePathStyle: true,
+		Type: "S3",
+		Params: map[string]string{
+			"bucket_name":      "test-bucket",
+			"region":           "us-west-2",
+			"endpoint":         "http://localhost:4566",
+			"force_path_style": "true",
+		},
 	}
 
 	params := cfg.ToParams()
-	require.Equal(t, "S3", cfg.Provider)
+	require.Equal(t, "S3", cfg.Type)
 	require.Equal(t, "test-bucket", params["bucket_name"])
 	require.Equal(t, "us-west-2", params["region"])
 	require.Equal(t, "http://localhost:4566", params["endpoint"])
 	require.Equal(t, "true", params["force_path_style"])
+}
+
+func TestDataStoreConfigValidation(t *testing.T) {
+	tests := []struct {
+		name    string
+		config  DataStoreConfig
+		wantErr string
+	}{
+		{
+			name: "valid S3 config",
+			config: DataStoreConfig{
+				Type: "S3",
+				Params: map[string]string{
+					"bucket_name": "test-bucket",
+					"region":      "us-west-2",
+				},
+				Schema: DataStoreSchema{
+					LedgersPerFile:    64,
+					FilesPerPartition: 10,
+				},
+			},
+			wantErr: "",
+		},
+		{
+			name: "S3 missing bucket name",
+			config: DataStoreConfig{
+				Type:   "S3",
+				Params: map[string]string{},
+				Schema: DataStoreSchema{
+					LedgersPerFile:    64,
+					FilesPerPartition: 10,
+				},
+			},
+			wantErr: "bucket_name is required for S3",
+		},
+		// ... existing test cases ...
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := tt.config.Validate()
+			if tt.wantErr != "" {
+				require.EqualError(t, err, tt.wantErr)
+			} else {
+				require.NoError(t, err)
+			}
+		})
+	}
 }
