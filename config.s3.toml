@@ -20,7 +20,7 @@ compute_content_length = "true"
 [datastore_config.schema]
 # Configuration for data organization
 ledgers_per_file = 1      # Number of ledgers stored in each file.
-files_per_partition = 1   # Number of files per partition/directory.
+files_per_partition = 64000   # Number of files per partition/directory.
 
 # Stellar-core Configuration
 [stellar_core_config]

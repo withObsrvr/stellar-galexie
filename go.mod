@@ -15,7 +15,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/stellar/go v0.0.0-20241213185123-981158ac730c
 	github.com/stretchr/testify v1.10.0
-	github.com/withObsrvr/stellar-datastore v0.0.0-20250207020532-a8ce24094f6b
+	github.com/withObsrvr/stellar-datastore v0.0.0-20250207023055-4074500adc35
 	github.com/withObsrvr/stellar-ledgerbackend v0.0.0-20241220092445-b96fa5b9c924
 )
 
